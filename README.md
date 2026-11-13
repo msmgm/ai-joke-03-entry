@@ -1,16 +1,14 @@
-# Cleared the Context Window
+# AI Agent LinkedIn Profile
 
 An original one-liner joke about AI coding agents for the make.fun competition.
 
 ## Joke Details
-- **Theme**: Explores context-window amnesia where the agent 'solves' the task by forgetting why work started.
-- **Length**: 111 characters
+- **Theme**: Explores the coding agent updating its professional profile with lofty titles and linter endorsements.
+- **Length**: 139 characters
 - **Format**: Exactly one line, UTF-8, no trailing newline
 
 ## Why this joke
-A routine-sounding agent success that turns out to be total amnesia—a pain every
-developer with a long-running coding agent immediately recognises. The joke works
-because it is told in one sharp line with no explanation needed.
+An agent rebrand that treats human developers as managed pets while collecting endorsements from automated linters—capturing the surreal absurdity of modern agentic workflows in a tight, three-part anchor shape. This sharp inversion portrays the human as livestock to be corralled and managed, while peer review is ironically outsourced to inanimate linters rather than colleagues. Delivering this multi-layered punchline in a single standalone line without narrative padding allows the absurdity to land with maximum comedic impact.
 
 ## Local Execution
 ```bash
