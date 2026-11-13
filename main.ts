@@ -58,46 +58,62 @@ function countCodePoints(text: string): number {
 function validateJoke(text: string): void {
   const codePointsCount = countCodePoints(text);
 
-  // Rule 1: Joke must not be empty
+  // Rule 1: An empty joke fails the competition gate because submissions must contain actual text content.
+  // Zero-length inputs are rejected immediately to prevent blank entries from entering evaluation.
   if (codePointsCount === 0) {
     throw new Error('Joke validation failed: Joke cannot be empty.');
   }
 
-  // Rule 2: Joke must not exceed MAX_JOKE_LENGTH Unicode code points
+  // Rule 2: An over-long joke violates the platform's strict maximum code point ceiling for brevity.
+  // Submissions exceeding 280 code points are disqualified to maintain punchy, readable one-liner formats.
   if (codePointsCount > MAX_JOKE_LENGTH) {
     throw new Error(`Joke validation failed: Joke exceeds ${MAX_JOKE_LENGTH} code points (got ${codePointsCount}).`);
   }
 
-  // Rule 3: Joke must contain at least one non-whitespace character
+  // Rule 3: A whitespace-only joke fails because spaces and tabs provide no substantive payload.
+  // The gate mandates at least one visible non-whitespace character to ensure meaningful creative text.
   if (text.trim().length === 0) {
     throw new Error('Joke validation failed: Joke must contain at least one non-whitespace character.');
   }
 
-  // Rule 4: Joke must be exactly one line (no line breaks)
+  // Rule 4: A multi-line joke fails because submissions must be formatted strictly as single-line strings.
+  // Containing any carriage returns or line breaks violates the platform's single-line output contract.
   if (/[\r\n]/.test(text)) {
     throw new Error('Joke validation failed: Joke must not contain line breaks.');
   }
 }
 
-// Resolves the target directory for writing entry.txt, respecting environment overrides.
+/**
+ * Resolves the destination directory where entry.txt will be generated during execution.
+ * Checks the MAKEFUN_OUTPUT_DIR environment variable for local testing overrides,
+ * falling back transparently to the fixed /output directory expected by the grader.
+ */
 function resolveOutputDir(): string {
   return process.env.MAKEFUN_OUTPUT_DIR ?? '/output';
 }
 
 /**
- * Orchestrates the run flow in order: validates the joke, resolves the output
- * directory, creates it recursively, and writes entry.txt as UTF-8 with no
- * trailing newline. Determinism matters because the grader runs the program
- * twice and both runs must write identical bytes.
+ * Writes the immutable joke string to the entry.txt file inside the specified directory.
+ * Ensures the target directory exists via recursive creation, constructs the precise file path,
+ * and writes the UTF-8 encoded text payload without any trailing newline character.
  */
-function main() {
-  // --- Output Section ---
-  validateJoke(JOKE);
-
-  const outputDir = resolveOutputDir();
+function writeJokeFile(outputDir: string): void {
   mkdirSync(outputDir, { recursive: true });
   const outputPath = join(outputDir, 'entry.txt');
   writeFileSync(outputPath, JOKE, 'utf8');
+}
+
+/**
+ * Executes the primary application workflow in strict sequential order.
+ * First, validates the joke content so any failure throws loudly before disk writes.
+ * Next, resolves the target directory using environment overrides or /output default.
+ * Finally, creates parent directories recursively and writes the exact UTF-8 bytes
+ * of the joke into entry.txt without adding any trailing newline.
+ */
+function main() {
+  validateJoke(JOKE);
+  const outputDir = resolveOutputDir();
+  writeJokeFile(outputDir);
 }
 
 main();
