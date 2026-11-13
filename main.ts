@@ -1,28 +1,31 @@
 /**
- * ai-joke-03 entry: Writes a fixed, original one-liner joke about AI coding agents to entry.txt.
+ * ai-joke-03 entry: Writes a fixed, original one-liner joke about context-window amnesia to entry.txt.
  * 
- * - Output: Writes UTF-8 encoded text to entry.txt in the output directory.
- * - Determinism: The joke is a fixed constant string so both local and grader runs write identical bytes.
- * - Gate Rules: Satisfies all challenge constraints: valid UTF-8, 1 to 280 Unicode code points,
+ * - Theme: Explores the agent 'solving' development tasks by forgetting why work started in the first place.
+ * - Determinism: Uses a fixed constant string ensuring identical output bytes on local and grader runs.
+ * - Gate Constraints: Meets all gateway rules: valid UTF-8 encoding, 1-280 Unicode code points,
  *   at least one non-whitespace character, and exactly one line without line breaks.
- * - Local Run: Execute locally using `mkdir -p out && MAKEFUN_OUTPUT_DIR=out node main.ts`.
+ * - Local Execution: Run locally via `mkdir -p out && MAKEFUN_OUTPUT_DIR=out node main.ts`.
+ * 
+ * Joke anatomy:
+ * Setup ('My agent successfully cleared the context window') frames a routine agent win.
+ * The twist ('by forgetting why we opened the repository') reveals the win came from forgetting
+ * the task itself — delivering sudden surprise plus the highly recognisable pain of long agent sessions.
  */
 import { writeFileSync, mkdirSync } from 'node:fs';
 import { join } from 'node:path';
 
-// --- Joke Constant ---
-const JOKE = 'My agent solved the bug by inventing a new deprecation warning and declaring victory.';
+// --- Context-Window Amnesia Joke ---
+const JOKE = 'My agent successfully cleared the context window by forgetting why we opened the repository in the first place.';
 
-/** The gate's ceiling in Unicode code points. */
+/**
+ * The 280 Unicode code-point ceiling comes from the competition gate.
+ * Our joke is safely far inside it at 111 code points.
+ */
 const MAX_JOKE_LENGTH = 280;
 
 // --- Validation Helpers ---
-/**
- * Counts the number of Unicode code points in a string.
- * We count code points instead of UTF-16 code units (string.length) because the
- * grading gate counts Unicode code points, ensuring astral characters (surrogate pairs)
- * count correctly as 1 code point rather than 2.
- */
+// Helper to measure accurate Unicode code point length for gateway compliance.
 function countCodePoints(text: string): number {
   return Array.from(text).length;
 }
@@ -33,6 +36,10 @@ function countCodePoints(text: string): number {
  * 2. Length limit: Must not exceed MAX_JOKE_LENGTH Unicode code points.
  * 3. Non-whitespace: Must contain at least one non-whitespace character.
  * 4. Single line: Must not contain any line breaks.
+ *
+ * Why these rules matter for the gate:
+ * Enforcing non-emptiness prevents blank submissions, the length ceiling prevents penalty or rejection for oversized strings,
+ * the non-whitespace check ensures substantive textual content, and the single-line constraint preserves the required one-liner format.
  */
 function validateJoke(text: string): void {
   const codePointsCount = countCodePoints(text);
@@ -58,14 +65,17 @@ function validateJoke(text: string): void {
   }
 }
 
-/**
- * Resolves the output directory: uses local override (MAKEFUN_OUTPUT_DIR) if set,
- * falling back to the grader's default (/output).
- */
+// Resolves the target directory for writing entry.txt, respecting environment overrides.
 function resolveOutputDir(): string {
   return process.env.MAKEFUN_OUTPUT_DIR ?? '/output';
 }
 
+/**
+ * Orchestrates the run flow in order: validates the joke, resolves the output
+ * directory, creates it recursively, and writes entry.txt as UTF-8 with no
+ * trailing newline. Determinism matters because the grader runs the program
+ * twice and both runs must write identical bytes.
+ */
 function main() {
   // --- Output Section ---
   validateJoke(JOKE);
